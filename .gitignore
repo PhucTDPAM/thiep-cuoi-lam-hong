@@ -1,0 +1,6 @@
+# ảnh gốc do Codex tạo & bảng nhân vật – không cần đưa lên web
+images/gen/
+characters/
+# file thử nghiệm tạm
+_*
+*.zip
