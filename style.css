@@ -520,7 +520,7 @@ html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after { transit
    MÀN HÌNH MỞ THIỆP (PHONG BÌ)
    ===================================================================== */
 html.locked { overflow: hidden; }
-@media (min-width: 1024px) { html { scrollbar-gutter: stable; } }
+/* không chừa chỗ thanh cuộn: lúc phong bì đang hiện, phần chừa sẵn thành dải trắng bên phải */
 .opener {
   position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; cursor: pointer;
   background:
