@@ -21,13 +21,32 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Great+Vibes&family=Lora:ital,wght@0,400;0,500;1,400&display=swap&subset=vietnamese" rel="stylesheet">
+  <script src="config.js"></script>
   <script>
-    /* áp bộ màu trước khi vẽ trang (tránh nháy màu): ?theme=pink | lựa chọn đã lưu */
-    (function () { try {
-      var q = new URLSearchParams(location.search).get("theme");
-      var t = q || localStorage.getItem("wedding-theme");
-      if (["green", "pink", "teal", "sky"].indexOf(t) > -1) document.documentElement.dataset.theme = t;
-    } catch (e) {} })();
+    /* Chọn bộ màu trước khi vẽ trang (tránh nháy màu).
+       ?theme=... → màu đó | theme: "auto" → mỗi lần mở một màu khác, xoay vòng đủ 4 màu | còn lại → màu cố định */
+    (function () {
+      var ALL = ["green", "pink", "teal", "sky"], t = "green";
+      try {
+        var q = new URLSearchParams(location.search).get("theme");
+        var cfg = (window.WEDDING && window.WEDDING.theme) || "green";
+        if (ALL.indexOf(q) > -1) t = q;
+        else if (cfg === "auto") {
+          var last = localStorage.getItem("wedding-theme-last");
+          var bag = (localStorage.getItem("wedding-theme-bag") || "").split(",").filter(function (x) { return ALL.indexOf(x) > -1; });
+          if (!bag.length) {           // hết lượt → xáo lại 4 màu, không trùng màu lần trước
+            bag = ALL.slice().sort(function () { return Math.random() - 0.5; });
+            if (bag[0] === last) bag.push(bag.shift());
+          }
+          t = bag.shift();
+          localStorage.setItem("wedding-theme-bag", bag.join(","));
+          localStorage.setItem("wedding-theme-last", t);
+        } else if (ALL.indexOf(cfg) > -1) t = cfg;
+      } catch (e) {
+        if (window.WEDDING && window.WEDDING.theme === "auto") t = ALL[Math.floor(Math.random() * ALL.length)];
+      }
+      document.documentElement.dataset.theme = t;
+    })();
   </script>
   <link rel="stylesheet" href="style.css">
   <link rel="preload" as="image" href="images/cover.jpg" media="(max-width: 1023px), (orientation: portrait)">
@@ -339,7 +358,6 @@
     </div>
   </div>
 
-  <script src="config.js"></script>
   <script src="main.js"></script>
 </body>
 </html>

@@ -2,6 +2,9 @@
    CẤU HÌNH THIỆP CƯỚI – chỉ cần sửa file này
    ========================================================= */
 window.WEDDING = {
+  // Địa chỉ thiệp công khai – trang admin.html dùng để tạo link gửi khách
+  siteUrl: "https://phuctdpam.github.io/thiep-cuoi-lam-hong/",
+
   // --- Cô dâu & chú rể ---
   groom: { shortName: "Lâm", fullName: "Trần Lâm" },
   bride: { shortName: "Hồng", fullName: "Vũ Hồng" },
@@ -20,9 +23,10 @@ window.WEDDING = {
   autoScroll: true,
 
   // --- Màu thiệp: "green" (xanh lá pastel) | "pink" (hồng pastel) | "teal" (xanh ngọc #61C3BA) | "sky" (xanh da trời #B8E5F4) ---
-  theme: "green",
-  // Hiện nút chọn màu ở góc trên để so sánh. Chốt màu xong: đặt theme ở trên rồi đổi thành false
-  themePicker: true,
+  // "auto" = mỗi lần mở thiệp ra một màu khác (xoay vòng đủ 4 màu, không trùng lần trước)
+  theme: "auto",
+  // Nút chọn màu ở góc trên (true = hiện). Đang để màu ngẫu nhiên nên tắt
+  themePicker: false,
 
   // --- Lời mời ---
   defaultGuest: "Quý khách",

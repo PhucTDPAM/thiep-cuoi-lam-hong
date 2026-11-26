@@ -234,6 +234,13 @@
 
   // Không tham dự → khoá câu hỏi ăn cỗ
   const form = $("#gbForm");
+  // link từ trang admin có &ben=trai|gai → chọn sẵn "Bạn là khách của"
+  (function presetSide() {
+    const ben = new URLSearchParams(location.search).get("ben");
+    const val = { trai: "Nhà trai", gai: "Nhà gái" }[ben];
+    const input = val && form.querySelector(`input[name="side"][value="${val}"]`);
+    if (input) input.checked = true;
+  })();
   form.addEventListener("change", (e) => {
     if (e.target.name !== "days") return;
     const no = e.target.value.startsWith("Không");
@@ -524,16 +531,14 @@
   (function themeSetup() {
     const html = document.documentElement, picker = $("#themePicker");
     const pickerOn = C.themePicker !== false;
-    const q = new URLSearchParams(location.search).get("theme");
-    let saved = null;
-    try { saved = localStorage.getItem("wedding-theme"); if (!pickerOn) localStorage.removeItem("wedding-theme"); } catch {}
+    try { localStorage.removeItem("wedding-theme"); } catch {} // khoá cũ (bản trước lưu màu đã chọn)
     const valid = (t) => Object.prototype.hasOwnProperty.call(THEMES, t);
     const apply = (t) => {
       html.dataset.theme = t;
       const meta = $('meta[name="theme-color"]'); if (meta) meta.content = THEMES[t].meta;
       $$("button[data-theme]", picker).forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.theme === t)));
     };
-    apply(valid(q) ? q : pickerOn && valid(saved) ? saved : valid(C.theme) ? C.theme : "green");
+    apply(valid(html.dataset.theme) ? html.dataset.theme : "green"); // màu đã được chọn trong <head>
     if (!pickerOn) { picker.remove(); return; }
     picker.hidden = false;
     picker.addEventListener("click", (e) => {
@@ -541,7 +546,6 @@
       e.stopPropagation();
       html.classList.add("theme-anim");
       apply(b.dataset.theme);
-      try { localStorage.setItem("wedding-theme", b.dataset.theme); } catch {}
       const r = b.getBoundingClientRect();
       setTimeout(() => burst(r.left + r.width / 2, r.top + r.height / 2, 10, 60), 0);
       setTimeout(() => html.classList.remove("theme-anim"), 700);

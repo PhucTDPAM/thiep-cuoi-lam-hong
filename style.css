@@ -633,6 +633,8 @@ html.locked { overflow: hidden; }
    ===================================================================== */
 .sec, .opener { isolation: isolate; }
 .deco { position: absolute; z-index: -1; height: auto; pointer-events: none; user-select: none; -webkit-user-select: none; }
+/* hoa trang trí không thuộc lưới cột (bản máy tính chia 2 cột) → luôn bám mép của cả phần */
+.sec > .deco { grid-column: auto; grid-row: auto; }
 .fc { width: 120px; }
 .fc.tl { top: 0; left: 0; }
 .fc.tr { top: 0; right: 0; transform: scaleX(-1); }
