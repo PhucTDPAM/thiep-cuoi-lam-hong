@@ -30,6 +30,30 @@ html[data-theme="pink"] {
   --seal1: #F3B3C7; --seal3: #B95D7F;
 }
 
+/* ---------- Bộ màu XANH NGỌC (#61C3BA) ---------- */
+html[data-theme="teal"] {
+  --pastel: #DDF3F0;  --ink: #1F5E58;  --ink-2: #174A45;
+  --sea: #389A91;     --sea-2: #61C3BA; --deep: #2B7D76;
+  --accent: #4DB6AC;  --muted: #6E9C97; --muted-2: #46736E; --page-bg: #EAF7F5;
+  --ink-rgb: 31,94,88; --deep-rgb: 16,52,49; --sea-rgb: 56,154,145; --sea2-rgb: 97,195,186;
+  --pastel-rgb: 221,243,240; --accent-rgb: 77,182,172; --washi-rgb: 178,228,222;
+  --op1: #ECF9F7; --op2: #D3F0EC; --op3: #BDE7E1;
+  --env-back: #D6F0EC; --env-f1: #F5FCFB; --env-f2: #E0F4F1; --flap1: #C3EAE4; --flap2: #A6DED6;
+  --seal1: #8FD8CF; --seal3: #2B7D76;
+}
+
+/* ---------- Bộ màu XANH DA TRỜI PASTEL (#B8E5F4) ---------- */
+html[data-theme="sky"] {
+  --pastel: #E3F4FB;  --ink: #24587A;  --ink-2: #1B4560;
+  --sea: #4A98BE;     --sea-2: #8CCDE6; --deep: #3A7FA3;
+  --accent: #6BB8DA;  --muted: #7A98AA; --muted-2: #4F7287; --page-bg: #EEF8FC;
+  --ink-rgb: 36,88,122; --deep-rgb: 18,44,61; --sea-rgb: 74,152,190; --sea2-rgb: 140,205,230;
+  --pastel-rgb: 227,244,251; --accent-rgb: 107,184,218; --washi-rgb: 184,229,244;
+  --op1: #F0FAFD; --op2: #DCF1F9; --op3: #C6E8F5;
+  --env-back: #D9F0F9; --env-f1: #F7FCFE; --env-f2: #E3F4FB; --flap1: #C9EAF6; --flap2: #B8E5F4;
+  --seal1: #A3DAEF; --seal3: #3A7FA3;
+}
+
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 body {

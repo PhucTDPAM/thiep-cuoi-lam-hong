@@ -19,7 +19,7 @@ window.WEDDING = {
   // Tự cuộn mặc định: khách muốn cuộn tay thì bấm nút ⏸ dưới đĩa nhạc. false = tắt
   autoScroll: true,
 
-  // --- Màu thiệp: "green" (xanh lá pastel) hoặc "pink" (hồng pastel) ---
+  // --- Màu thiệp: "green" (xanh lá pastel) | "pink" (hồng pastel) | "teal" (xanh ngọc #61C3BA) | "sky" (xanh da trời #B8E5F4) ---
   theme: "green",
   // Hiện nút chọn màu ở góc trên để so sánh. Chốt màu xong: đặt theme ở trên rồi đổi thành false
   themePicker: true,

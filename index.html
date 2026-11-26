@@ -26,7 +26,7 @@
     (function () { try {
       var q = new URLSearchParams(location.search).get("theme");
       var t = q || localStorage.getItem("wedding-theme");
-      if (t === "pink" || t === "green") document.documentElement.dataset.theme = t;
+      if (["green", "pink", "teal", "sky"].indexOf(t) > -1) document.documentElement.dataset.theme = t;
     } catch (e) {} })();
   </script>
   <link rel="stylesheet" href="style.css">
@@ -125,6 +125,8 @@
     <span class="tp-label">Màu thiệp</span>
     <button type="button" data-theme="green" aria-label="Xanh lá pastel" title="Xanh lá pastel"><i style="background:linear-gradient(135deg,#DDF0E2,#86B994)"></i></button>
     <button type="button" data-theme="pink" aria-label="Hồng pastel" title="Hồng pastel"><i style="background:linear-gradient(135deg,#FBE1EA,#E7A2B8)"></i></button>
+    <button type="button" data-theme="teal" aria-label="Xanh ngọc" title="Xanh ngọc"><i style="background:linear-gradient(135deg,#DDF3F0,#61C3BA)"></i></button>
+    <button type="button" data-theme="sky" aria-label="Xanh da trời pastel" title="Xanh da trời pastel"><i style="background:linear-gradient(135deg,#E3F4FB,#B8E5F4)"></i></button>
   </div>
 
   <!-- Màn hình mở thiệp -->

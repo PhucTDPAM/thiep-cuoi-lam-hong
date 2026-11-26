@@ -510,16 +510,24 @@
     pink: { name: "Hồng pastel", meta: "#FFF6F9",
       burst: ["#E07FA0", "#F2A7BE", "#F8C9D7", "#FFFFFF", "#F6B8CB"],
       hearts: ["#F2A7BE", "#F8C9D7", "#E07FA0", "#FBD9E3"], leaves: ["#B9D8C2", "#CFE6D6", "#F3C2D1"],
-      music: ["#E07FA0", "#F2A7BE", "#F8C9D7"] }
+      music: ["#E07FA0", "#F2A7BE", "#F8C9D7"] },
+    teal: { name: "Xanh ngọc", meta: "#FFFFFF",
+      burst: ["#4DB6AC", "#61C3BA", "#A6DED6", "#F2B8C6", "#FFFFFF"],
+      hearts: ["#61C3BA", "#A6DED6", "#F2B8C6", "#4DB6AC"], leaves: ["#86C9B5", "#A6DED6", "#C3EAE4"],
+      music: ["#4DB6AC", "#61C3BA", "#F2B8C6"] },
+    sky: { name: "Xanh da trời pastel", meta: "#FFFFFF",
+      burst: ["#6BB8DA", "#8CCDE6", "#B8E5F4", "#F2B8C6", "#FFFFFF"],
+      hearts: ["#8CCDE6", "#B8E5F4", "#F2B8C6", "#6BB8DA"], leaves: ["#9FCFB8", "#B8E5F4", "#CFE6D6"],
+      music: ["#6BB8DA", "#8CCDE6", "#F2B8C6"] }
   };
-  const fx = () => THEMES[document.documentElement.dataset.theme === "pink" ? "pink" : "green"];
+  const fx = () => THEMES[document.documentElement.dataset.theme] || THEMES.green;
   (function themeSetup() {
     const html = document.documentElement, picker = $("#themePicker");
     const pickerOn = C.themePicker !== false;
     const q = new URLSearchParams(location.search).get("theme");
     let saved = null;
     try { saved = localStorage.getItem("wedding-theme"); if (!pickerOn) localStorage.removeItem("wedding-theme"); } catch {}
-    const valid = (t) => t === "green" || t === "pink";
+    const valid = (t) => Object.prototype.hasOwnProperty.call(THEMES, t);
     const apply = (t) => {
       html.dataset.theme = t;
       const meta = $('meta[name="theme-color"]'); if (meta) meta.content = THEMES[t].meta;
