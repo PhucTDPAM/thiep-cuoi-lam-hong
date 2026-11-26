@@ -36,8 +36,9 @@ function setup() {
     ["Ở lại ăn cỗ", `=COUNTIF(${L}F2:F,"Có")`],
     ["Không ăn cỗ", `=COUNTIF(${L}F2:F,"Không")`],
     ["", ""],
-    ["Ăn cỗ nhà gái (16/01 + cả hai ngày)", `=COUNTIFS(${L}F2:F,"Có",${L}E2:E,"16/01*")+COUNTIFS(${L}F2:F,"Có",${L}E2:E,"Cả hai ngày")`],
-    ["Ăn cỗ nhà trai (17/01 + cả hai ngày)", `=COUNTIFS(${L}F2:F,"Có",${L}E2:E,"17/01*")+COUNTIFS(${L}F2:F,"Có",${L}E2:E,"Cả hai ngày")`]
+    ["Ăn cỗ – khách nhà gái", `=COUNTIFS(${L}F2:F,"Có",${L}D2:D,"Nhà gái")`],
+    ["Ăn cỗ – khách nhà trai", `=COUNTIFS(${L}F2:F,"Có",${L}D2:D,"Nhà trai")`],
+    ["Ăn cỗ – khách cả hai bên", `=COUNTIFS(${L}F2:F,"Có",${L}D2:D,"Cả hai")`]
   ];
   st.getRange(1, 1, rows.length, 2).setValues(rows);
   st.getRange("A1").setFontWeight("bold").setFontSize(13);

@@ -65,12 +65,12 @@ window.WEDDING = {
   // --- Lịch trình (icon: dinner | rings | arch | cake) ---
   schedule: [
     { day: "Thứ Bảy · 16/01/2027", items: [
-      { time: "07:00", title: "Khai tiệc nhà gái", desc: "Mời quý khách dùng bữa cùng gia đình nhà gái", icon: "dinner" },
-      { time: "15:00", title: "Lễ ăn hỏi", desc: "Nghi lễ ăn hỏi tại tư gia nhà gái", icon: "cake" }
+      { time: "15:00", title: "Lễ ăn hỏi", desc: "Khai tiệc tại tư gia hai nhà", icon: "cake" }
     ]},
     { day: "Chủ Nhật · 17/01/2027", items: [
-      { time: "08:00", title: "Khai tiệc nhà trai", desc: "Mời quý khách dùng bữa cùng gia đình nhà trai", icon: "dinner" },
-      { time: "11:00", title: "Lễ thành hôn", desc: "Cùng nhau chứng kiến khoảnh khắc thiêng liêng tại nhà trai", icon: "rings" }
+      { time: "07:00", title: "Khai tiệc nhà gái", desc: "Mời quý khách dùng bữa tại tư gia nhà gái", icon: "dinner" },
+      { time: "08:00", title: "Khai tiệc nhà trai", desc: "Mời quý khách dùng bữa tại tư gia nhà trai", icon: "dinner" },
+      { time: "11:00", title: "Lễ thành hôn", desc: "Lễ thành hôn tại tư gia nhà trai", icon: "rings" }
     ]}
   ],
 
