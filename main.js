@@ -13,8 +13,12 @@
   /* ---------- Văn bản cơ bản ---------- */
   $$("[data-f]").forEach((el) => (el.textContent = pick(el.dataset.f)));
   const guest = new URLSearchParams(location.search).get("to");
-  $("#guestName").textContent = guest ? guest.trim().slice(0, 60) : C.defaultGuest;
-  $("#inviteQuote").innerHTML = C.inviteQuote;
+  const guestName = guest ? guest.trim().replace(/\s+/g, " ").slice(0, 60) : "";
+  $("#guestName").textContent = guestName || C.defaultGuest;
+  // thay {ten} trong các câu bằng tên khách (không có tên → "quý khách")
+  const personal = (t) => String(t || "").replace(/\{ten\}/g, guestName || "quý khách");
+  const personalHtml = (t) => String(t || "").split("{ten}").join(guestName ? esc(guestName) : "quý khách");
+  $("#inviteQuote").innerHTML = personalHtml(C.inviteQuote);
   $("#inviteQuoteEn").textContent = C.inviteQuoteEn || "";
   $("#coverDate").textContent = C.coverDate;
   const wideMQ = matchMedia("(min-width: 1024px) and (orientation: landscape)");
@@ -27,7 +31,7 @@
   $("#polR").dataset.src = C.images.polaroidRight;
   $("#timelineImg").dataset.src = C.images.timeline;
   $("#memText").textContent = C.memoriesText;
-  $("#thanks").textContent = C.thankYou;
+  $("#thanks").textContent = personal(C.thankYou);
 
   /* ---------- Hai gia đình ---------- */
   const fam = (f) => `<h3>${esc(f.title)}</h3><p>${esc(f.father)}</p><p>${esc(f.mother)}</p><p class="place">${esc(f.place)}</p>`;
@@ -129,7 +133,7 @@
       <div class="item reveal">
         <svg><use href="#i-${esc(it.icon)}"/></svg>
         <span class="t">${esc(it.time)}</span>
-        <div><h4>${esc(it.title)}</h4><p>${esc(it.desc)}</p></div>
+        <div><h4>${esc(it.title)}</h4><p>${esc(personal(it.desc))}</p></div>
       </div>`).join("") + `</li>`
   ).join("");
 
@@ -234,6 +238,7 @@
 
   // Không tham dự → khoá câu hỏi ăn cỗ
   const form = $("#gbForm");
+  if (guestName) form.elements.name.value = guestName; // khách mở link riêng → điền sẵn tên
   // link từ trang admin có &ben=trai|gai → chọn sẵn "Bạn là khách của"
   (function presetSide() {
     const ben = new URLSearchParams(location.search).get("ben");
@@ -480,20 +485,36 @@
 
   /* ---------- Hộp mừng cưới ---------- */
   const modal = $("#giftModal");
+  // nội dung chuyển khoản gợi ý (không dấu – app ngân hàng hay bỏ dấu)
+  const noAccent = (s) => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D");
+  const giftFrom = guestName ? noAccent(guestName) + " " : "";
+  const giftMsgs = [
+    { who: "Cô dâu", text: `${giftFrom}mung cuoi co dau ${noAccent(C.bride.shortName)}` },
+    { who: "Chú rể", text: `${giftFrom}mung cuoi chu re ${noAccent(C.groom.shortName)}` }
+  ];
+  $("#gifts").classList.toggle("single", C.gifts.length === 1);
   $("#gifts").innerHTML = C.gifts.map((g) => `
     <div class="gift">
       <h4>${esc(g.label)}</h4>
-      <img src="${esc(g.qr)}" alt="QR ${esc(g.label)}" loading="lazy">
-      <p>${esc(g.bank)}</p><p><b>${esc(g.account)}</b></p><p>${esc(g.owner)}</p>
-      <button class="copy" data-acc="${esc(g.account)}">Sao chép STK</button>
-    </div>`).join("");
+      <img src="${esc(g.qr)}" alt="Mã QR chuyển khoản ${esc(g.label)}" loading="lazy">
+      <p>${esc(g.bank)}</p><p class="acc"><b>${esc(g.account)}</b></p><p>${esc(g.owner)}</p>
+      <button class="copy" data-acc="${esc(g.account)}">Sao chép số tài khoản</button>
+    </div>`).join("") + (C.giftNote ? `
+    <div class="gift-note">
+      <p>💌 ${esc(C.giftNote)}</p>
+      <p class="gn-sub">Bấm để sao chép nội dung chuyển khoản:</p>
+      <div class="gn-chips">${giftMsgs.map((m) => `<button class="copy gn" data-acc="${esc(m.text)}"><span>Gửi ${m.who}</span>${esc(m.text)}</button>`).join("")}</div>
+    </div>` : "");
   const closeModal = () => { modal.classList.remove("open"); modal.setAttribute("aria-hidden", "true"); document.body.style.overflow = ""; };
   $("#giftBtn").onclick = () => { modal.classList.add("open"); modal.setAttribute("aria-hidden", "false"); document.body.style.overflow = "hidden"; };
   $(".modal-close", modal).onclick = closeModal;
   modal.addEventListener("click", (e) => {
     if (e.target === modal) closeModal();
     const b = e.target.closest(".copy");
-    if (b) navigator.clipboard?.writeText(b.dataset.acc).then(() => { b.textContent = "Đã sao chép ✓"; setTimeout(() => (b.textContent = "Sao chép STK"), 1800); });
+    if (b) navigator.clipboard?.writeText(b.dataset.acc).then(() => {
+      const old = b.innerHTML; b.textContent = "Đã sao chép ✓"; b.classList.add("done");
+      setTimeout(() => { b.innerHTML = old; b.classList.remove("done"); }, 1800);
+    });
   });
 
   /* ---------- Tim, lá & cánh hoa trôi ---------- */

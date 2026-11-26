@@ -30,7 +30,8 @@ window.WEDDING = {
 
   // --- Lời mời ---
   defaultGuest: "Quý khách",
-  inviteQuote: "Trân trọng kính mời quý khách dành thời gian quý giá tham dự lễ cưới của chúng tôi",
+  // {ten} = tên khách trên link (nhập ở admin.html); không có tên thì thành "quý khách"
+  inviteQuote: "Trân trọng kính mời {ten} dành thời gian quý giá tham dự lễ cưới của chúng tôi",
   inviteQuoteEn: "Chúng mình đã cùng nhau viết nên câu chuyện tình yêu suốt bao năm… và chương mới sẽ bắt đầu từ đây",
 
   // --- Hai gia đình ---
@@ -72,8 +73,8 @@ window.WEDDING = {
       { time: "15:00", title: "Lễ ăn hỏi", desc: "Khai tiệc tại tư gia hai nhà", icon: "cake" }
     ]},
     { day: "Chủ Nhật · 17/01/2027", items: [
-      { time: "07:00", title: "Khai tiệc nhà gái", desc: "Mời quý khách dùng bữa tại tư gia nhà gái", icon: "dinner" },
-      { time: "08:00", title: "Khai tiệc nhà trai", desc: "Mời quý khách dùng bữa tại tư gia nhà trai", icon: "dinner" },
+      { time: "07:00", title: "Khai tiệc nhà gái", desc: "Mời {ten} dùng bữa tại tư gia nhà gái", icon: "dinner" },
+      { time: "08:00", title: "Khai tiệc nhà trai", desc: "Mời {ten} dùng bữa tại tư gia nhà trai", icon: "dinner" },
       { time: "11:00", title: "Lễ thành hôn", desc: "Lễ thành hôn tại tư gia nhà trai", icon: "rings" }
     ]}
   ],
@@ -131,14 +132,15 @@ window.WEDDING = {
     ]
   },
 
-  // --- Hộp mừng cưới (sửa thông tin & thay ảnh QR) ---
+  // --- Hộp mừng cưới: cô dâu chú rể dùng chung 1 tài khoản ---
   gifts: [
-    { label: "Mừng cưới chú rể", bank: "Tên ngân hàng", account: "0000000000", owner: "TRAN LAM", qr: "images/qr-groom.svg" },
-    { label: "Mừng cưới cô dâu", bank: "Tên ngân hàng", account: "0000000000", owner: "VU HONG", qr: "images/qr-bride.svg" }
+    { label: "Mừng cưới cô dâu & chú rể", bank: "MB Bank (Ngân hàng Quân đội)", account: "0397543862", owner: "VU THI HONG", qr: "images/qr-mung-cuoi.webp" }
   ],
+  // Lời dặn hiện dưới mã QR
+  giftNote: "Khi chuyển khoản, quý khách vui lòng ghi rõ trong nội dung: lời chúc dành cho cô dâu hay chú rể nhé!",
 
   // Sticker nhân vật chibi (images/stickers). false = tắt
   stickers: true,
 
-  thankYou: "Sự hiện diện của quý khách là niềm vinh hạnh cho gia đình chúng tôi. Xin chân thành cảm ơn!"
+  thankYou: "Sự hiện diện của {ten} là niềm vinh hạnh cho gia đình chúng tôi. Xin chân thành cảm ơn!"
 };

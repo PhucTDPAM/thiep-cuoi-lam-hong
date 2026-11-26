@@ -27,7 +27,7 @@ Mọi thông tin nằm trong **`config.js`**: tên, ngày giờ, địa điểm,
 - **Sticker**: `images/stickers/*.webp` (nền trong suốt).
 - **Bản đồ**: trên Google Maps ghim đúng nhà → Chia sẻ → Sao chép liên kết → dán vào `mapUrl`.
 - **Nhạc**: `music.mp3` (15 phút đầu bản giao hưởng, 96kbps). Nhạc bật khi khách chạm mở phong bì.
-- **QR mừng cưới**: thay `images/qr-groom.svg`, `images/qr-bride.svg` + sửa STK trong `gifts`.
+- **QR mừng cưới**: `images/qr-mung-cuoi.webp` (tài khoản chung MB Bank) – sửa STK trong `gifts`, lời dặn trong `giftNote`.
 - **Ảnh chia sẻ Zalo/Messenger**: sửa `og:image`, `og:url` trong `index.html` thành URL tuyệt đối sau khi đưa lên host (`images/og-cover.jpg` đã có sẵn 1200×630).
 
 ## Lời chúc dùng chung qua Google Sheets
