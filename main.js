@@ -15,9 +15,14 @@
   const guest = new URLSearchParams(location.search).get("to");
   const guestName = guest ? guest.trim().replace(/\s+/g, " ").slice(0, 60) : "";
   $("#guestName").textContent = guestName || C.defaultGuest;
-  // thay {ten} trong các câu bằng tên khách (không có tên → "quý khách")
-  const personal = (t) => String(t || "").replace(/\{ten\}/g, guestName || "quý khách");
-  const personalHtml = (t) => String(t || "").split("{ten}").join(guestName ? esc(guestName) : "quý khách");
+  // cô dâu chú rể tự xưng: ?xung=... (chọn ở admin) → nếu không có thì tự đoán theo danh xưng trong tên khách
+  const X = window.XUNGHO;
+  const xungParam = new URLSearchParams(location.search).get("xung");
+  const ta = X ? X.ta(X.valid(xungParam) ? xungParam : guestName ? X.detect(guestName) : "toi") : "chúng tôi";
+  $("#welcomeTa").textContent = ta;
+  // thay {ten} = tên khách (không có tên → "quý khách"), {ta} = cách tự xưng
+  const personal = (t) => String(t || "").replace(/\{ten\}/g, guestName || "quý khách").replace(/\{ta\}/g, ta);
+  const personalHtml = (t) => String(t || "").split("{ten}").join(guestName ? esc(guestName) : "quý khách").split("{ta}").join(esc(ta));
   $("#inviteQuote").innerHTML = personalHtml(C.inviteQuote);
   $("#inviteQuoteEn").textContent = C.inviteQuoteEn || "";
   $("#coverDate").textContent = C.coverDate;
@@ -141,8 +146,24 @@
   $("#dots").innerHTML = C.dresscode.map((c) => `<span style="background:${esc(c)}"></span>`).join("");
 
   /* ---------- Album ---------- */
-  $("#masonry").innerHTML = C.album.map((src, i) =>
-    `<button class="reveal" data-i="${i}" aria-label="Xem ảnh ${i + 1}"><img class="lazy" data-src="${esc(src)}" alt="Kỷ niệm ${i + 1}"></button>`).join("");
+  // xếp so le: mỗi ảnh thả vào cột đang thấp nhất → cột nào cũng đầy, khối ảnh luôn cân giữa
+  const RATIOS = [3 / 4, 4 / 5, 1];                       // rộng/cao, lặp vòng cho nhịp so le
+  const albumBtns = C.album.map((src, i) => {
+    const b = document.createElement("button");
+    b.className = "reveal"; b.dataset.i = i; b.setAttribute("aria-label", `Xem ảnh ${i + 1}`);
+    b.innerHTML = `<img class="lazy" data-src="${esc(src)}" alt="Kỷ niệm ${i + 1}" style="aspect-ratio:${RATIOS[i % 3]}">`;
+    return b;
+  });
+  const albumMQ = matchMedia("(min-width: 1024px) and (orientation: landscape)");
+  function layoutAlbum() {
+    const n = Math.min(albumMQ.matches ? 3 : 2, albumBtns.length) || 1;
+    const cols = Array.from({ length: n }, () => { const c = document.createElement("div"); c.className = "mcol"; return c; });
+    const h = new Array(n).fill(0);
+    albumBtns.forEach((b, i) => { const k = h.indexOf(Math.min(...h)); cols[k].appendChild(b); h[k] += 1 / RATIOS[i % 3]; });
+    $("#masonry").replaceChildren(...cols);
+  }
+  layoutAlbum();
+  albumMQ.addEventListener?.("change", layoutAlbum);
 
   /* ---------- Lazy load + hiệu ứng xuất hiện ---------- */
   const loadImg = (img) => { if (img.dataset.src && !img.src) { img.decoding = "async"; img.src = img.dataset.src; } };
@@ -389,8 +410,34 @@
     const audio = $("#bgm"), btn = $("#musicBtn");
     let userPaused = false;
     let fadeT;
+    // danh sách bài: mỗi lần mở thiệp lấy bài kế tiếp trong "túi" xáo trộn (đủ các bài rồi mới lặp, không trùng lần trước)
+    const tracks = (Array.isArray(C.music) ? C.music : [C.music]).map((t) => (typeof t === "string" ? { file: t } : t)).filter((t) => t && t.file);
+    const files = tracks.map((t) => t.file);
+    function nextTrack() {
+      if (files.length < 2) return files[0];
+      let last = null, bag = [];
+      try {
+        last = localStorage.getItem("wedding-music-last");
+        bag = (localStorage.getItem("wedding-music-bag") || "").split("|").filter((f) => files.includes(f));
+      } catch {}
+      if (!bag.length) {
+        bag = files.slice().sort(() => Math.random() - 0.5);
+        if (bag[0] === last) bag.push(bag.shift());
+      }
+      const f = bag.shift();
+      try { localStorage.setItem("wedding-music-bag", bag.join("|")); localStorage.setItem("wedding-music-last", f); } catch {}
+      return f;
+    }
+    let current = nextTrack();
+    audio.dataset.track = current || "";
+    // hết bài → chuyển bài tiếp theo (chỉ 1 bài thì phát lặp lại)
+    audio.loop = files.length < 2;
+    audio.addEventListener("ended", () => {
+      current = nextTrack(); audio.dataset.track = current;
+      audio.src = current; audio.play().catch(() => btn.classList.remove("playing"));
+    });
     const play = (fadeIn) => {
-      if (!audio.src) audio.src = C.music;
+      if (!audio.src && current) audio.src = current;
       clearInterval(fadeT);
       audio.volume = fadeIn ? 0 : 0.6;
       audio.play().then(() => {

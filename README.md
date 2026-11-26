@@ -26,7 +26,7 @@ Mọi thông tin nằm trong **`config.js`**: tên, ngày giờ, địa điểm,
 - **Ảnh**: `images/` (đã nén JPG). Ảnh gốc PNG do Codex tạo ở `images/gen/` – không cần đưa lên host.
 - **Sticker**: `images/stickers/*.webp` (nền trong suốt).
 - **Bản đồ**: trên Google Maps ghim đúng nhà → Chia sẻ → Sao chép liên kết → dán vào `mapUrl`.
-- **Nhạc**: `music.mp3` (15 phút đầu bản giao hưởng, 96kbps). Nhạc bật khi khách chạm mở phong bì.
+- **Nhạc**: 4 bài (`music-*.mp3`), khai báo trong `music` của config.js. Mỗi lần mở thiệp phát 1 bài khác lần trước, hết bài tự chuyển bài. Thêm bài: chép mp3 vào thư mục gốc rồi thêm 1 dòng vào `music`.
 - **QR mừng cưới**: `images/qr-mung-cuoi.webp` (tài khoản chung MB Bank) – sửa STK trong `gifts`, lời dặn trong `giftNote`.
 - **Ảnh chia sẻ Zalo/Messenger**: sửa `og:image`, `og:url` trong `index.html` thành URL tuyệt đối sau khi đưa lên host (`images/og-cover.jpg` đã có sẵn 1200×630).
 

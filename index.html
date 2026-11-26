@@ -21,7 +21,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Great+Vibes&family=Lora:ital,wght@0,400;0,500;1,400&display=swap&subset=vietnamese" rel="stylesheet">
-  <script src="config.js"></script>
+  <script src="config.js?v=202611261008"></script>
   <script>
     /* Chọn bộ màu trước khi vẽ trang (tránh nháy màu).
        ?theme=... → màu đó | theme: "auto" → mỗi lần mở một màu khác, xoay vòng đủ 4 màu | còn lại → màu cố định */
@@ -48,7 +48,7 @@
       document.documentElement.dataset.theme = t;
     })();
   </script>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=202611261008">
   <link rel="preload" as="image" href="images/cover.jpg" media="(max-width: 1023px), (orientation: portrait)">
   <link rel="preload" as="image" href="images/cover-desktop.jpg" media="(min-width: 1024px) and (orientation: landscape)">
 </head>
@@ -181,7 +181,7 @@
   <button class="music-btn" id="musicBtn" aria-label="Bật/tắt nhạc nền">
     <span class="vinyl"><span class="vinyl-label"></span></span>
   </button>
-  <audio id="bgm" loop preload="none"></audio>
+  <audio id="bgm" preload="none"></audio>
 
   <span class="auto-tip" id="autoTip" aria-live="polite"></span>
   <!-- Nút tự cuộn -->
@@ -245,7 +245,7 @@
 
     <!-- 4. LỜI MỜI -->
     <section class="sec welcome reveal">
-      <p class="cap">Thân mời tới dự lễ cưới thân mật<br>của chúng tôi</p>
+      <p class="cap">Thân mời tới dự lễ cưới thân mật<br>của <span id="welcomeTa">chúng tôi</span></p>
       <h2 class="full-names">
         <span class="fade-name" data-f="groom.fullName"></span>
         <span class="amp-soft">&amp;</span>
@@ -358,6 +358,7 @@
     </div>
   </div>
 
-  <script src="main.js"></script>
+  <script src="xungho.js?v=202611261008"></script>
+  <script src="main.js?v=202611261008"></script>
 </body>
 </html>

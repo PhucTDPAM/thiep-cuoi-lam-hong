@@ -31,7 +31,8 @@ window.WEDDING = {
   // --- Lời mời ---
   defaultGuest: "Quý khách",
   // {ten} = tên khách trên link (nhập ở admin.html); không có tên thì thành "quý khách"
-  inviteQuote: "Trân trọng kính mời {ten} dành thời gian quý giá tham dự lễ cưới của chúng tôi",
+  // {ta}  = cô dâu chú rể tự xưng theo khách: chúng con / chúng cháu / chúng em / anh chị / chúng mình (mặc định "chúng tôi")
+  inviteQuote: "Trân trọng kính mời {ten} dành thời gian quý giá tham dự lễ cưới của {ta}",
   inviteQuoteEn: "Chúng mình đã cùng nhau viết nên câu chuyện tình yêu suốt bao năm… và chương mới sẽ bắt đầu từ đây",
 
   // --- Hai gia đình ---
@@ -98,8 +99,14 @@ window.WEDDING = {
     "images/polaroid-1.jpg", "images/polaroid-2.jpg"
   ],
 
-  // --- Nhạc nền: đặt file bài "Một Nhà" vào thư mục gốc với tên music.mp3 ---
-  music: "music.mp3",
+  // --- Nhạc nền: mỗi lần mở thiệp phát 1 bài khác lần trước (xoay vòng đủ các bài),
+  //     hết bài thì tự chuyển bài tiếp theo. Thêm bài: chép file mp3 vào thư mục gốc rồi thêm 1 dòng ---
+  music: [
+    { file: "music-i-do.mp3",           title: "I Do – 911" },
+    { file: "music-cuoi-nhau-di.mp3",   title: "Cưới Nhau Đi – Bùi Anh Tuấn ft Hiền Hồ" },
+    { file: "music-lo-thuong-nhau.mp3", title: "Lỡ Thương Nhau – Mounter x Nguyễn Hùng" },
+    { file: "music-giao-huong.mp3",     title: "Nhạc đám cưới giao hưởng" }
+  ],
 
   // --- Sổ lưu bút & xác nhận tham dự ---
   guestbook: {
@@ -142,5 +149,5 @@ window.WEDDING = {
   // Sticker nhân vật chibi (images/stickers). false = tắt
   stickers: true,
 
-  thankYou: "Sự hiện diện của {ten} là niềm vinh hạnh cho gia đình chúng tôi. Xin chân thành cảm ơn!"
+  thankYou: "Sự hiện diện của {ten} là niềm vinh hạnh cho gia đình {ta}. Xin chân thành cảm ơn!"
 };

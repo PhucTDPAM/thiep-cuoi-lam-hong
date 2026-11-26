@@ -71,6 +71,12 @@
     .seg input:checked + span { background: #fff; color: var(--ink); box-shadow: 0 1px 4px rgba(32,52,42,.12); }
     .seg input[value=trai]:checked + span { color: var(--green); } .seg input[value=gai]:checked + span { color: var(--pink); }
     .seg input:focus-visible + span { outline: 2px solid var(--green-2); }
+    select { width: 100%; border: 1.5px solid var(--line); border-radius: 12px; padding: 11px 14px; background: var(--soft); font: inherit; font-size: 15px; color: var(--ink); outline: none; appearance: none; -webkit-appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+      background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+    select:focus { border-color: var(--green-2); background-color: #fff; box-shadow: 0 0 0 4px rgba(109,180,135,.15); }
+    .xung-hint { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+    .xung-hint b { color: var(--green); font-weight: 600; }
 
     .btn { border: 0; border-radius: 12px; padding: 11px 18px; background: var(--green); color: #fff; font-weight: 600; font-size: 14.5px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: transform .1s, background .15s, box-shadow .15s; }
     .btn:hover { background: #458A5E; }
@@ -205,6 +211,11 @@
               </div>
             </div>
             <div class="field">
+              <label for="gXung">Cô dâu chú rể xưng là</label>
+              <select id="gXung"></select>
+              <p class="xung-hint" id="xungHint"></p>
+            </div>
+            <div class="field">
               <label for="gNote">Ghi chú <span style="font-weight:400;color:var(--muted)">(không hiện trên thiệp)</span></label>
               <input type="text" id="gNote" maxlength="80" placeholder="VD: bạn đại học, số Zalo…">
             </div>
@@ -259,7 +270,7 @@
         <summary>✉️ Mẫu lời nhắn khi gửi</summary>
         <div class="inner">
           <textarea id="tpl" rows="4"></textarea>
-          <p class="hint">Dùng <b>{ten}</b> cho tên khách và <b>{link}</b> cho link thiệp.</p>
+          <p class="hint">Dùng <b>{ten}</b> cho tên khách, <b>{ta}</b> cho cách cô dâu chú rể tự xưng, <b>{link}</b> cho link thiệp.</p>
           <p class="hint" style="margin-top:10px">Xem trước:</p>
           <div class="msg" id="tplPreview" style="margin-top:6px"></div>
           <button class="btn ghost sm" type="button" id="tplReset" style="margin-top:10px">Khôi phục mẫu gốc</button>
@@ -296,7 +307,8 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="config.js"></script>
+  <script src="config.js?v=202611261008"></script>
+  <script src="xungho.js?v=202611261008"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
   <script>
   (function () {
@@ -315,7 +327,11 @@
     // link thiệp: luôn dùng địa chỉ công khai trong config (kể cả khi mở admin trên máy tính ở localhost)
     const BASE = (C.siteUrl || new URL("./", location.href).href).replace(/\/?$/, "/");
     $("#viewSite").href = BASE;
-    const linkFor = (g) => BASE + "?to=" + encodeURIComponent(g.name.trim()).replace(/%20/g, "+") + (g.side ? "&ben=" + g.side : "");
+    const X = window.XUNGHO;
+    // xưng hô: g.xung = "" → tự đoán theo tên; link chỉ kèm &xung= khi chọn tay khác với tự đoán
+    const xungOf = (g) => (g.xung && X.valid(g.xung) ? g.xung : X.detect(g.name));
+    const linkFor = (g) => BASE + "?to=" + encodeURIComponent(g.name.trim()).replace(/%20/g, "+") + (g.side ? "&ben=" + g.side : "")
+      + (g.xung && X.valid(g.xung) && g.xung !== X.detect(g.name) ? "&xung=" + g.xung : "");
 
     // ---------- dữ liệu ----------
     const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
@@ -323,7 +339,7 @@
     const save = () => { try { localStorage.setItem(KEY, JSON.stringify(guests)); } catch { toast("Không lưu được – trình duyệt chặn bộ nhớ"); } render(); };
     const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
     let tpl = (() => { try { return localStorage.getItem(TPL_KEY) || DEFAULT_TPL; } catch { return DEFAULT_TPL; } })();
-    const message = (g) => tpl.replace(/\{ten\}/g, g.name).replace(/\{link\}/g, linkFor(g));
+    const message = (g) => tpl.replace(/\{ten\}/g, g.name).replace(/\{ta\}/g, X.ta(xungOf(g))).replace(/\{link\}/g, linkFor(g));
 
     // ---------- tiện ích ----------
     let toastT;
@@ -363,7 +379,19 @@
     let editing = null, lastAdded = null;
     const sideVal = () => (form.querySelector("input[name=side]:checked") || {}).value || "";
     const cleanName = (s) => s.trim().replace(/\s+/g, " ");
-    const typedGuest = () => { const name = cleanName($("#gName").value); return name ? { name, side: sideVal() } : null; };
+    const typedGuest = () => { const name = cleanName($("#gName").value); return name ? { name, side: sideVal(), xung: $("#gXung").value } : null; };
+    // ô chọn: "Tự động" + 6 cách xưng
+    function fillXung() {
+      const name = cleanName($("#gName").value), auto = X.detect(name), cur = $("#gXung").value;
+      $("#gXung").innerHTML = `<option value="">Tự động – ${X.ta(auto)}</option>` +
+        X.OPTIONS.map((o) => `<option value="${o.code}">${o.ta}  (${o.hint})</option>`).join("");
+      $("#gXung").value = cur;
+      const chosen = cur || auto;
+      $("#xungHint").innerHTML = name
+        ? `Thiệp sẽ viết: “…niềm vinh hạnh cho gia đình <b>${esc(X.ta(chosen))}</b>”`
+        : "Tự đoán theo danh xưng đầu tên: Bố Mẹ → chúng con, Bác → chúng cháu, Anh/Chị → chúng em, Em → anh chị…";
+    }
+    $("#gXung").addEventListener("change", () => { fillXung(); updateLive(); });
     const recent = () => (lastAdded && guests.includes(lastAdded) ? lastAdded : null);
     const currentGuest = () => typedGuest() || recent();
 
@@ -373,14 +401,14 @@
       if (!g) { box.hidden = true; return; }
       box.hidden = false;
       $("#liveTitle").innerHTML = typed
-        ? `Lời nhắn sẽ gửi cho <b>${esc(g.name)}</b> · ${SIDES[g.side] ?? "Chung"}`
+        ? `Lời nhắn sẽ gửi cho <b>${esc(g.name)}</b> · ${SIDES[g.side] ?? "Chung"} · xưng “${esc(X.ta(xungOf(g)))}”`
         : `✓ Đã thêm <b>${esc(g.name)}</b> – gửi lời mời ngay:`;
       $("#livePreview").textContent = message(g);
       $("#liveActs").hidden = !!typed;
       $("#liveSend").textContent = navigator.share ? "Gửi lời mời" : "Sao chép lời mời";
       if (flash) { box.classList.remove("flash"); void box.offsetWidth; box.classList.add("flash"); }
     }
-    $("#gName").addEventListener("input", () => updateLive());
+    $("#gName").addEventListener("input", () => { fillXung(); updateLive(); });
     $("#sideSeg").addEventListener("change", () => updateLive());
     $("#liveSend").onclick = () => recent() && sendInvite(recent());
     $("#liveLink").onclick = () => recent() && sendInvite(recent(), true);
@@ -391,15 +419,15 @@
       if (!name) return;
       const note = $("#gNote").value.trim();
       if (editing) {
-        lastAdded = Object.assign(guests.find((g) => g.id === editing), { name, side: sideVal(), note });
+        lastAdded = Object.assign(guests.find((g) => g.id === editing), { name, side: sideVal(), note, xung: $("#gXung").value });
         toast(`Đã lưu: ${name}`); stopEdit(true);
       } else {
         if (guests.some((g) => g.name.toLowerCase() === name.toLowerCase()) && !confirm(`"${name}" đã có trong danh sách. Vẫn thêm?`)) return;
-        lastAdded = { id: uid(), name, side: sideVal(), note, sent: false, created: Date.now() };
+        lastAdded = { id: uid(), name, side: sideVal(), note, xung: $("#gXung").value, sent: false, created: Date.now() };
         guests.unshift(lastAdded);
         toast(`Đã thêm: ${name}`);
       }
-      $("#gName").value = ""; $("#gNote").value = "";
+      $("#gName").value = ""; $("#gNote").value = ""; $("#gXung").value = ""; fillXung();
       save(); updateLive(true);
       $("#gName").focus({ preventScroll: true });
     });
@@ -407,13 +435,14 @@
       editing = g.id;
       $("#gName").value = g.name; $("#gNote").value = g.note || "";
       form.querySelector(`input[name=side][value="${g.side}"]`).checked = true;
+      $("#gXung").value = g.xung || ""; fillXung();
       $("#formTitle").textContent = "✏️ Sửa khách mời"; $("#addBtn").textContent = "Lưu thay đổi"; $("#cancelEdit").hidden = false;
       form.scrollIntoView({ behavior: "smooth", block: "center" }); $("#gName").focus({ preventScroll: true });
       updateLive();
     }
     function stopEdit(keep) {
       editing = null;
-      if (!keep) { $("#gName").value = ""; $("#gNote").value = ""; }
+      if (!keep) { $("#gName").value = ""; $("#gNote").value = ""; $("#gXung").value = ""; fillXung(); }
       $("#formTitle").textContent = "➕ Thêm khách mời"; $("#addBtn").textContent = "Thêm khách"; $("#cancelEdit").hidden = true;
       updateLive();
     }
@@ -468,6 +497,7 @@
               <div class="name">${esc(g.name)}</div>
               <div class="meta">
                 <span class="badge ${sideCls(g.side)}">${SIDES[g.side] ?? "Chung"}</span>
+                <span>xưng “${esc(X.ta(xungOf(g)))}”</span>
                 ${g.sent ? '<span class="badge ok">✓ Đã gửi</span>' : ""}
                 ${g.note ? `<span class="note">${esc(g.note)}</span>` : ""}
               </div>
@@ -523,8 +553,8 @@
     const stamp = () => new Date().toISOString().slice(0, 10);
     $("#exportCsv").onclick = () => {
       const cell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
-      const rows = [["Tên khách", "Khách của", "Ghi chú", "Đã gửi", "Link thiệp"]]
-        .concat(guests.map((g) => [g.name, SIDES[g.side] ?? "Chung", g.note || "", g.sent ? "Có" : "Chưa", linkFor(g)]));
+      const rows = [["Tên khách", "Khách của", "Xưng hô", "Ghi chú", "Đã gửi", "Link thiệp"]]
+        .concat(guests.map((g) => [g.name, SIDES[g.side] ?? "Chung", X.ta(xungOf(g)), g.note || "", g.sent ? "Có" : "Chưa", linkFor(g)]));
       download(`khach-moi-${stamp()}.csv`, "﻿" + rows.map((r) => r.map(cell).join(",")).join("\r\n"), "text/csv;charset=utf-8");
     };
     $("#backup").onclick = () => download(`khach-moi-${stamp()}.json`, JSON.stringify({ version: 1, guests, template: tpl }, null, 2), "application/json");
@@ -536,7 +566,7 @@
         const list = Array.isArray(d) ? d : d.guests;
         if (!Array.isArray(list)) throw new Error("sai định dạng");
         const have = new Set(guests.map((g) => g.id)); let n = 0;
-        list.forEach((g) => { if (g && g.name && !have.has(g.id)) { guests.push({ id: g.id || uid(), name: String(g.name), side: g.side || "", note: g.note || "", sent: !!g.sent, created: g.created || Date.now() }); n++; } });
+        list.forEach((g) => { if (g && g.name && !have.has(g.id)) { guests.push({ id: g.id || uid(), name: String(g.name), side: g.side || "", note: g.note || "", xung: g.xung || "", sent: !!g.sent, created: g.created || Date.now() }); n++; } });
         if (d.template) { tpl = d.template; tplEl.value = tpl; try { localStorage.setItem(TPL_KEY, tpl); } catch {} }
         save(); toast(`Đã khôi phục ${n} khách`);
       } catch { toast("File không đúng định dạng sao lưu"); }
@@ -547,6 +577,7 @@
       if (confirm(`Xoá toàn bộ ${guests.length} khách mời? Nên bấm "Sao lưu" trước.`)) { guests = []; save(); toast("Đã xoá danh sách"); }
     };
 
+    fillXung();
     render();
   })();
   </script>
