@@ -30,6 +30,19 @@ Mọi thông tin nằm trong **`config.js`**: tên, ngày giờ, địa điểm,
 - **QR mừng cưới**: `images/qr-mung-cuoi.webp` (tài khoản chung MB Bank) – sửa STK trong `gifts`, lời dặn trong `giftNote`.
 - **Ảnh chia sẻ Zalo/Messenger**: sửa `og:image`, `og:url` trong `index.html` thành URL tuyệt đối sau khi đưa lên host (`images/og-cover.jpg` đã có sẵn 1200×630).
 
+## Quản trị thiệp (quan-tri.html) – sửa thiệp không cần đụng code
+Mở `…/quan-tri.html`: sửa tên, ngày giờ, sự kiện, lịch trình, câu chữ, **thay ảnh**, album, nhạc, mã QR, màu thiệp, tuỳ chọn.
+Có khung xem trước bản nháp; bấm **“Lưu & đăng lên thiệp”** → ảnh tự nén, tải lên GitHub, thiệp cập nhật sau ~1–2 phút, link đã gửi giữ nguyên.
+
+Lần đầu cần **mã truy cập GitHub** (bấm nút “Chưa kết nối” trên trang để xem hướng dẫn):
+github.com → Settings → Developer settings → Fine-grained tokens → chỉ chọn kho thiệp → quyền **Contents: Read and write**.
+Mã chỉ lưu trên trình duyệt của máy đang dùng.
+
+Ảnh tải lên nằm ở `images/u/`, nhạc tải lên tên `music-u-*.mp3`; ảnh cũ không còn dùng được tự dọn.
+
+## Viết thiệp (viet-thiep.html) – tạo link mời từng khách
+(trước đây là admin.html – link cũ tự chuyển sang) Nhập tên khách, bên, xưng hô → link riêng, gửi Zalo/Messenger, QR, đánh dấu đã gửi.
+
 ## Lời chúc dùng chung qua Google Sheets
 Khi nối Google Sheets: lời chúc của mọi khách hiện cho tất cả mọi người (danh sách + bong bóng góc dưới trái), và bạn có bảng thống kê xác nhận tham dự.
 
