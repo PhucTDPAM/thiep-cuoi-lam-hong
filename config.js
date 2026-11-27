@@ -3,7 +3,7 @@
    ========================================================= */
 window.WEDDING = {
   // Địa chỉ thiệp công khai – trang admin.html dùng để tạo link gửi khách
-  siteUrl: "https://phuctdpam.github.io/thiep-cuoi-lam-hong/",
+  siteUrl: "https://lam-hong-wedding.pages.dev/",
 
   // --- Cô dâu & chú rể ---
   groom: { shortName: "Lâm", fullName: "Trần Lâm" },
